@@ -67,7 +67,11 @@ def calc_sqexp_kernel(x_QF, x_train_NF=None, length_scale=1.0):
     assert F == F2
 
     k_QN = np.zeros((Q, N))
-    # TODO compute kernel between rows of x_QF and rows of x_train_NF
+    # compute kernel between rows of x_QF and rows of x_train_NF
+    for q in range(Q):
+        for n in range(N):
+            diff = x_QF[q] - x_train_NF[n]
+            k_QN[q, n] = np.exp(-0.5 * np.dot(diff, diff) / length_scale**2)
 
     # Ensure the kernel matrix positive definite
     # By adding a small positive to the diagonal
