@@ -71,7 +71,8 @@ def calc_linear_kernel(x_QF, x_train_NF=None):
     assert F == F2
     
     k_QN = np.zeros((Q, N))
-    # TODO compute linear kernel between rows of x_QF and rows of x_train_NF
+    #compute linear kernel between rows of x_QF and rows of x_train_NF
+    k_QN = np.dot(x_QF, x_train_NF.T)
 
     # Ensure the kernel matrix positive definite
     # By adding a small positive to the diagonal
