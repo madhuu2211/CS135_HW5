@@ -61,20 +61,18 @@ def calc_sqexp_kernel(x_QF, x_train_NF=None, length_scale=1.0):
     '''
     assert x_QF.ndim == 2
     assert x_train_NF.ndim == 2
-
+    
     Q, F = x_QF.shape
     N, F2 = x_train_NF.shape
     assert F == F2
 
-    k_QN = np.zeros((Q, N))
-    # compute kernel between rows of x_QF and rows of x_train_NF
-    for q in range(Q):
-        for n in range(N):
-            diff = x_QF[q] - x_train_NF[n]
-            k_QN[q, n] = np.exp(-0.5 * np.dot(diff, diff) / length_scale**2)
+    # Compute the squared Euclidean distances between all pairs of query and training vectors
+    distances = np.sum(x_QF[:, np.newaxis, :]**2, axis=2) - 2 * np.dot(x_QF, x_train_NF.T) + np.sum(x_train_NF**2, axis=1)
 
-    # Ensure the kernel matrix positive definite
-    # By adding a small positive to the diagonal
+    # Compute the kernel matrix
+    k_QN = np.exp(-0.5 * distances / length_scale**2)
+
+    # Ensure the kernel matrix positive definite by adding a small positive value to the diagonal
     M = np.minimum(Q, N)
     k_QN[:M, :M] += 1e-08 * np.eye(M)
     return k_QN
